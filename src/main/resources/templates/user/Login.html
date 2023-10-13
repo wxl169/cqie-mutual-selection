@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="/css/index.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/mycss.css"/>
+</head>
+<body>
+    <!--Vue.js-->
+    <script src="/js/vue.js"></script>
+    <!--Element-ui-->
+    <script src="/js/index.js"></script>
+    <!--axios-->
+    <script src="/js/axios.min.js"></script>
+
+    <div id="container">
+        <el-container>
+            <el-header height="100%">
+<!--                <img class="logo" src="https://assets.huibo.com/img/vue/enterprise/logo/login-logo.png"/>-->
+                <img class="logo" src="/img/server_html/logo.png"/>
+            </el-header>
+
+            <el-row style="position: relative; top: 50px">
+                <el-col :span="14">
+                    <img id="xuanchaun" src="https://assets.huibo.com/img/vue/enterprise/template/login_banner.png" >
+                </el-col>
+
+                <el-col :span="10">
+                    <el-row>
+                        <el-col :span="4" :offset="6">
+                            <span class="font-size-big">欢迎登录</span>
+                        </el-col>
+                    </el-row>
+                    <br>
+
+                    <template>
+                        <el-tabs v-model="form.type" @tab-click="handleClick">
+                            <el-tab-pane label="用户登录" name="0">
+                                <el-form ref="form" :model="form" label-width="80px">
+                                    <el-form-item label="学号">
+                                        <el-row>
+                                            <el-col :span="12">
+                                                <el-input type="userAccount" maxlength="20" v-model="form.userAccount" placeholder="请输入学号"></el-input>
+                                            </el-col>
+                                        </el-row>
+                                    </el-form-item>
+                                    <el-form-item label="密码">
+                                        <el-row>
+                                            <el-col :span="12">
+                                                <el-input type="password" maxlength="20" v-model="form.password" placeholder="请输入密码"></el-input>
+                                            </el-col>
+                                        </el-row>
+                                    </el-form-item>
+                                    <el-form-item>
+                                        <el-col>
+                                            <el-button type="primary" @click="onSubmit" class="move-right-small">登录</el-button>
+                                        </el-col>
+                                    </el-form-item>
+                                </el-form>
+                                <span>温馨提示：初始登录密码为身份证后六位，字母"X"为大写,请及时修改密码</span>
+                            </el-tab-pane>
+                            <el-tab-pane label="企业登录" name="1">
+                                <el-form ref="form" :model="form" label-width="80px">
+                                    <el-form-item label="企业账号">
+                                        <el-row>
+                                            <el-col :span="12">
+                                                <el-input type="text" maxlength="20" v-model="form.companiesAccount" placeholder="请输入企业账号"></el-input>
+                                            </el-col>
+                                        </el-row>
+                                    </el-form-item>
+                                    <el-form-item label="密码">
+                                        <el-row>
+                                            <el-col :span="12">
+                                                <el-input type="password" maxlength="20" v-model="form.password" placeholder="请输入密码"></el-input>
+                                            </el-col>
+                                        </el-row>
+                                    </el-form-item>
+                                    <el-form-item>
+                                        <el-col>
+                                            <el-button type="primary" @click="onSubmit" class="move-right-small">登录</el-button>
+                                            <el-button @click="register" class="move-right-mid">企业注册</el-button>
+                                        </el-col>
+                                    </el-form-item>
+                                </el-form>
+                            </el-tab-pane>
+                        </el-tabs>
+                    </template>
+                </el-col>
+            </el-row>
+
+
+            <el-footer>
+                <div class="foot">
+                    &copy;2023 by 吴小龙
+                </div>
+            </el-footer>
+        </el-container>
+
+
+
+    </div>
+
+    <script>
+        var baseUrl = "http://localhost:8080/";
+        //登录验证
+        var vm = new Vue({
+            el: '#container',
+            data: {
+                form: {
+                    userAccount: '',
+                    password: '',
+                    companiesAccount:'',
+                    type:0,
+                },
+                isLogin: false
+            },
+            methods: {
+                onSubmit() {
+                    // 发送 POST 请求
+                    axios({
+                        method: 'post',
+                        url: baseUrl + 'user/login',
+                        data: {
+                            userAccount: this.form.userAccount,
+                            password: this.form.password,
+                            companiesAccount:this.form.companiesAccount,
+                            type : this.form.type
+                        }
+                    }).then((res)=>{
+                        var vo = res.data;
+                        this.form.userAccount = '';
+                        this.form.password = '';
+                        this.form.companiesAccount = ' ';
+                        if (vo.code === 200) {
+                            this.isLogin = true
+                            window.location.href = baseUrl + "system/toIndex";
+                        }else {
+                            this.$notify({
+                                title: '警告',
+                                message: vo.description,
+                                type: 'warning'
+                            });
+                        }
+                    });
+                },
+                register() {window.location.href = baseUrl + 'system/toRegister';},
+                handleClick(tab, event) {
+                    this.form.type = tab.name;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

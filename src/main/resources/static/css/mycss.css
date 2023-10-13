@@ -1,0 +1,138 @@
+
+/**
+logo 图标
+ */
+.logo {
+    width: 300px;
+    height: 60px;
+    position: relative;
+    left: 20px;
+    top: 15px;
+}
+
+/**
+登录页宣传图
+ */
+#xuanchaun {
+    width: 650px;
+    height: 500px;
+    position: relative;
+    left: 80px;
+    top: -20px;
+    border-radius: 10px;
+}
+
+/**
+footer部分的文字
+ */
+.foot {
+    color: #9195A3;
+    position: absolute;
+    bottom: 5px;
+    left: 43%;
+}
+
+
+.foot2 {
+    color: #9195A3;
+    position: relative;
+    left: 43%;
+    width: 200px;
+}
+
+.no-attention {
+    color: #9195A3;
+}
+
+/**
+字体
+ */
+
+
+.font-size-mid {
+    font-size: 18px;
+}
+
+.font-size-big {
+    font-size: 20px;
+}
+
+/**
+移动
+ */
+
+.move-right-mini {
+    position: relative;
+    left: 10px;
+}
+
+.move-right-small {
+    position: relative;
+    left: 20px;
+}
+
+.move-right-mid {
+    position: relative;
+    left: 30px;
+}
+
+.move-right-big {
+    position: relative;
+    left: 60px;
+}
+
+.move-right-large {
+    position: relative;
+    left: 120px;
+}
+
+
+.move-bottom-mini-mini {
+    position: relative;
+    top: 3px;
+}
+
+.move-bottom-mini {
+    position: relative;
+    top: 10px;
+}
+
+.move-bottom-small {
+    position: relative;
+    top: 20px;
+}
+
+.move-bottom-mid {
+    position: relative;
+    top: 30px;
+}
+
+
+.space-mid {
+    margin-left: 50px;
+}
+
+
+ .avatar-uploader .el-upload {
+     border: 1px dashed #d9d9d9;
+     border-radius: 6px;
+     cursor: pointer;
+     position: relative;
+     overflow: hidden;
+ }
+.avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+}
+.avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+}
+.avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+}

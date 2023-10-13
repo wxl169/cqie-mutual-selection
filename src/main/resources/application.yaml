@@ -1,0 +1,68 @@
+spring:
+  datasource:
+    username: root
+    password: wu13145
+    url: jdbc:mysql://127.0.0.1:3306/cqie-mutual-selection?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  web:
+    resources:
+      static-locations: classpath:/resources/,classpath:/static/,classpath:/templates/
+  mvc:
+    static-path-pattern: /**
+    #knife4j\u914D\u7F6E
+    path match:
+      matching-strategy: ant_path_matcher
+  thymeleaf:
+    cache: false
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    prefix: classpath:/templates/
+
+#  redis:
+#    host: localhost
+#    port: 6379
+#    database: 0
+#    redisson_database : 1
+#    lettuce:
+#      pool:
+#        max-wait: 5000ms #\u8FDE\u63A5\u6C60\u6700\u5927\u963B\u585E\u7B49\u5F85\u65F6\u95F4
+#        max-active: 14 #\u8FDE\u63A5\u6C60\u6700\u5927\u8FDE\u63A5\u6570
+#        max-idle: 10 #\u8FDE\u63A5\u6C60\u4E2D\u6700\u5927\u7A7A\u95F2\u8FDE\u63A5
+#        min-idle: 5 #\u8FDE\u63A5\u6C60\u4E2D\u7684\u6700\u5C0F\u7A7A\u95F2\u8FDE\u63A5
+#    connect-timeout: 5000ms #\u8FDE\u63A5\u8D85\u65F6\u65F6\u95F4\uFF08\u6BEB\u79D2\uFF09
+
+
+
+#mybatis-plus
+mybatis-plus:
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: isDelete
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  type-aliases-package: org.wxl.cqiemutualselection.domain.entity
+  mapper-locations: classpath:mapper/*.xml
+
+server:
+  port: 8080
+
+# Sa-Token 配置
+sa-token:
+  # token名称 (同时也是cookie名称)
+  token-name: satoken
+  # token有效期，单位s 默认30天, -1代表永不过期
+  timeout: 2592000
+  # token临时有效期 (指定时间内无操作就视为token过期) 单位: 秒
+  activity-timeout: -1
+  # 是否允许同一账号并发登录 (为true时允许一起登录, 为false时新登录挤掉旧登录)
+  is-concurrent: true
+  # 在多人登录同一账号时，是否共用一个token (为true时所有登录共用一个token, 为false时每次登录新建一个token)
+  is-share: false
+  # token风格
+  token-style: uuid
+  # 是否输出操作日志
+  is-log: false
