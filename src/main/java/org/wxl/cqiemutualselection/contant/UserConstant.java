@@ -44,6 +44,16 @@ public interface UserConstant {
      */
     String ROLE_TEACHER = "老师";
     int ROLE_TEACHER_SQL = 1;
+    /**
+     * 身份：企业
+     */
+    String ROLE_COMPANIES = "企业";
+    int ROLE_COMPANIES_SQL = 3;
 
+    /**
+     * 身份：管理员
+     */
+    String ROLE_ADMIN = "管理员";
+    int ROLE_ADMIN_SQL = 2;
 
 }

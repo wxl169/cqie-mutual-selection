@@ -38,12 +38,6 @@ public class Companies implements Serializable {
     @ApiModelProperty(value = "企业全称")
     private String companiesFullName;
 
-    @ApiModelProperty(value = "企业账号")
-    private String companiesAccount;
-
-    @ApiModelProperty(value = "企业密码")
-    private String password;
-
     @ApiModelProperty(value = "企业地址（存入json格式数据，存多个地址）")
     private String address;
 
@@ -65,13 +59,15 @@ public class Companies implements Serializable {
     @ApiModelProperty(value = "企业人数")
     private Integer peopleNumber;
 
+    @ApiModelProperty(value = "审核通过")
+    private Integer process;
     @ApiModelProperty(value = "录入时间")
     private LocalDateTime createTime;
 
     @ApiModelProperty(value = "修改时间")
     private LocalDateTime updateTime;
 
-    @ApiModelProperty(value = "逻辑时间")
+    @ApiModelProperty(value = "逻辑删除")
     private Integer isDelete;
 
 

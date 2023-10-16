@@ -1,5 +1,6 @@
 package org.wxl.cqiemutualselection.service;
 
+import org.wxl.cqiemutualselection.domain.dto.CompaniesInfoDTO;
 import org.wxl.cqiemutualselection.domain.dto.LoginDTO;
 import org.wxl.cqiemutualselection.domain.dto.UserExcelDTO;
 import org.wxl.cqiemutualselection.domain.entity.User;
@@ -33,8 +34,17 @@ public interface IUserService extends IService<User> {
 
     /**
      * 排除已存在的数据
+     *
      * @param cachedDataList 要存入的数据
      * @return 需要存的数据
      */
     List<UserExcelDTO> excludeUser(List<UserExcelDTO> cachedDataList);
+
+    /**
+     * 企业注册
+     *
+     * @param companiesInfoDTO 企业注册信息
+     * @return 是否注册成功
+     */
+    boolean companiesRegister(CompaniesInfoDTO companiesInfoDTO);
 }

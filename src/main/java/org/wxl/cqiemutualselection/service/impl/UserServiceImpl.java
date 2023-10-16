@@ -2,11 +2,17 @@ package org.wxl.cqiemutualselection.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.transaction.annotation.Transactional;
 import org.wxl.cqiemutualselection.common.ErrorCode;
+import org.wxl.cqiemutualselection.contant.CompaniesConstant;
 import org.wxl.cqiemutualselection.contant.UserConstant;
+import org.wxl.cqiemutualselection.domain.dto.CompaniesInfoDTO;
 import org.wxl.cqiemutualselection.domain.dto.LoginDTO;
 import org.wxl.cqiemutualselection.domain.dto.UserExcelDTO;
+import org.wxl.cqiemutualselection.domain.entity.Companies;
 import org.wxl.cqiemutualselection.domain.entity.TbClass;
 import org.wxl.cqiemutualselection.domain.entity.User;
 import org.wxl.cqiemutualselection.exception.BusinessException;
@@ -18,6 +24,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.wxl.cqiemutualselection.utils.BeanCopyUtils;
 import org.wxl.cqiemutualselection.utils.MD5Util;
+import org.wxl.cqiemutualselection.utils.RegexUtils;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
@@ -35,6 +42,7 @@ import java.util.stream.Collectors;
  * @since 2023-10-12
  */
 @Service
+@Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
     @Resource
     private ICompaniesService companiesService;
@@ -49,6 +57,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         if (loginDTO.getType() == null){
             throw new BusinessException(ErrorCode.NULL_ERROR,"请选择登录账户类型");
         }
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         // 1.选择的登录类型 ———— 用户
         if (loginDTO.getType() == UserConstant.LOGIN_TYPE_USER){
             // 1.1 判断账号密码是否为空
@@ -56,7 +65,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             // 1.2 对密码进行加密处理
             String password = UserConstant.USER_PASSWORD_SALT + MD5Util.string2MD5(loginDTO.getPassword());
             // 1.3 检查账号密码是否正确
-            LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
             queryWrapper.select(User::getId,User::getUserAccount,User::getPassword)
                     .eq(User::getUserAccount,loginDTO.getUserAccount())
                     .eq(User::getPassword,password);
@@ -64,7 +72,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             // 1.4 判断是否登录成功
             // 1.4.1 如果user为空，则登录失败
             if (user == null){
-                throw new BusinessException(ErrorCode.SYSTEM_ERROR,"请注册账号");
+                throw new BusinessException(ErrorCode.SYSTEM_ERROR,"请注册用户账号");
             }
             // 1.4.2 如果user不为空，则登录成功保存在Session中
             StpUtil.login(user.getId());
@@ -73,10 +81,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
         // 2.选择的登录类型 ———— 企业
         if (loginDTO.getType() == UserConstant.LOGIN_TYPE_COMPANIES){
-            // 1.1 判断账号密码是否为空
-            judgeUserInfo(loginDTO.getUserAccount(),loginDTO.getPassword());
-            // 1.2 企业登录
-            return companiesService.companiesLogin(loginDTO.getCompaniesAccount(),loginDTO.getPassword());
+            // 2.1 判断账号密码是否为空
+            judgeUserInfo(loginDTO.getCompaniesAccount(),loginDTO.getPassword());
+            // 2.2 对密码进行加密处理
+            String password = CompaniesConstant.COMPANIES_PASSWORD_SALT + MD5Util.string2MD5(loginDTO.getPassword());
+            // 2.3 检查账号密码是否正确
+            queryWrapper.select(User::getId,User::getUserAccount,User::getPassword)
+                    .eq(User::getType,UserConstant.ROLE_COMPANIES_SQL)
+                    .eq(User::getUserAccount,loginDTO.getCompaniesAccount())
+                    .eq(User::getPassword,password);
+            User user = this.getOne(queryWrapper);
+            // 2.4 判断是否登录成功
+            // 2.4.1 如果user为空，则登录失败
+            if (user == null){
+                throw new BusinessException(ErrorCode.SYSTEM_ERROR,"请注册企业账号");
+            }
+            // 2.4.2 如果user不为空，则登录成功保存在Session中
+            StpUtil.login(user.getId());
+            return true;
         }
         return false;
     }
@@ -113,8 +135,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             }else{
                 user.setType(UserConstant.ROLE_STUDENT_SQL);
             }
-            //1.4 如果身份是学生则需要查询班级id
-            if (UserConstant.ROLE_STUDENT.equals(userExcelDTO.getRole())){
+            //1.4 查询班级id
+            if (StringUtils.isNotBlank(userExcelDTO.getClassName())){
                 queryWrapper.select(TbClass::getId)
                         .eq(TbClass::getClassName,userExcelDTO.getClassName());
                 TbClass tbClass = classMapper.selectOne(queryWrapper);
@@ -145,7 +167,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         List<String> userAccountList = new ArrayList<>(cachedDataList.size());
         //2. 筛选出学号为空，真实姓名为空的数据
         List<UserExcelDTO> collect = cachedDataList.stream().filter(userExcelDTO -> {
-            if (StringUtils.isBlank(userExcelDTO.getUserAccount()) || StringUtils.isBlank(userExcelDTO.getRealName())) {
+            if (StringUtils.isBlank(userExcelDTO.getUserAccount()) || StringUtils.isBlank(userExcelDTO.getRealName())
+                    || StringUtils.isBlank(userExcelDTO.getClassName()) || StringUtils.isBlank(userExcelDTO.getIdentityNumber())) {
+                log.error("序号：{}，数据缺失",userExcelDTO.getOrdinal());
+                return false;
+            }
+            if (RegexUtils.isPhoneInvalid(userExcelDTO.getPhone())){
+                log.error("序号：{}，手机格式错误",userExcelDTO.getOrdinal());
                 return false;
             }
             userAccountList.add(userExcelDTO.getUserAccount());
@@ -164,6 +192,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             collect = collect.parallelStream().filter(userExcelDTO -> {
                 for (User user : users) {
                     if (user.getUserAccount().equals(userExcelDTO.getUserAccount())) {
+                        log.error("序号：{}，该数据已存在!",userExcelDTO.getOrdinal());
                         return false;
                     }
                 }
@@ -171,6 +200,34 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             }).collect(Collectors.toList());
         }
         return collect;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean companiesRegister(CompaniesInfoDTO companiesInfoDTO) {
+        if (StringUtils.isBlank(companiesInfoDTO.getCompaniesEmail()) || StringUtils.isBlank(companiesInfoDTO.getPassword())){
+            throw new BusinessException(ErrorCode.NULL_ERROR,"企业邮箱或密码为空");
+        }
+        if (RegexUtils.isEmailInvalid(companiesInfoDTO.getCompaniesEmail())){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"企业邮箱格式错误");
+        }
+        //将企业信息保存到数据库中
+        Companies companies = companiesService.saveCompaniesRegisterInfo(companiesInfoDTO);
+        if (companies == null){
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"保持数据到公司表失败");
+        }
+        User user = new User();
+        user.setType(UserConstant.ROLE_COMPANIES_SQL);
+        //企业邮箱作为登录账号
+        user.setUserAccount(companiesInfoDTO.getCompaniesEmail());
+        user.setPassword(CompaniesConstant.COMPANIES_PASSWORD_SALT + MD5Util.string2MD5(companiesInfoDTO.getPassword()));
+        //将企业的id作为用户表中的真实姓名
+        user.setRealName(companies.getId().toString());
+        boolean save = this.save(user);
+        if (!save){
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"添加企业用户信息失败");
+        }
+        return true;
     }
 
 

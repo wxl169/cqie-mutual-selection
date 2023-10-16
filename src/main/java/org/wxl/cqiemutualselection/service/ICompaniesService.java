@@ -1,5 +1,6 @@
 package org.wxl.cqiemutualselection.service;
 
+import org.wxl.cqiemutualselection.domain.dto.CompaniesInfoDTO;
 import org.wxl.cqiemutualselection.domain.entity.Companies;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -15,11 +16,10 @@ public interface ICompaniesService extends IService<Companies> {
 
 
     /**
-     * 企业登录账号
+     * 将企业信息保存到公司表
      *
-     * @param companiesAccount 企业账号
-     * @param password 密码
-     * @return 是否登录成功
+     * @param companiesInfoDTO 公司信息
+     * @return 是否保持成功
      */
-    boolean companiesLogin(String companiesAccount, String password);
+    Companies saveCompaniesRegisterInfo(CompaniesInfoDTO companiesInfoDTO);
 }

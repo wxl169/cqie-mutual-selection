@@ -1,5 +1,6 @@
 package org.wxl.cqiemutualselection.controller;
 
+import cn.dev33.satoken.annotation.SaCheckRole;
 import com.alibaba.excel.EasyExcel;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,6 +28,13 @@ public class ExcelController {
     @Resource
     private IUserService userService;
 
+
+    /**
+     * 从Excel中导入学生和辅导员的数据
+     * @param file excel文件
+     * @return 是否导入成功
+     */
+    @SaCheckRole("admin")
     @PostMapping("/userInfo")
     public BaseResponse importEmpData(@RequestParam("file")MultipartFile file){
         BufferedInputStream in = null;
