@@ -40,6 +40,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     private ICompaniesService companiesService;
     @Resource
     private TbClassMapper classMapper;
+    @Resource
+    private UserMapper userMapper;
 
 
     @Override
@@ -132,6 +134,43 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         if (!b){
             throw new BusinessException(ErrorCode.SYSTEM_ERROR,"导入excel失败");
         }
+    }
+
+    @Override
+    public List<UserExcelDTO> excludeUser(List<UserExcelDTO> cachedDataList) {
+        if (cachedDataList == null ||cachedDataList.size() == 0){
+            throw new BusinessException(ErrorCode.NULL_ERROR,"请检查文件是否为空");
+        }
+        //1. 将所有学号存入集合中
+        List<String> userAccountList = new ArrayList<>(cachedDataList.size());
+        //2. 筛选出学号为空，真实姓名为空的数据
+        List<UserExcelDTO> collect = cachedDataList.stream().filter(userExcelDTO -> {
+            if (StringUtils.isBlank(userExcelDTO.getUserAccount()) || StringUtils.isBlank(userExcelDTO.getRealName())) {
+                return false;
+            }
+            userAccountList.add(userExcelDTO.getUserAccount());
+            return true;
+        }).collect(Collectors.toList());
+        if (userAccountList.size() == 0){
+            return null;
+        }
+        //3.根据Excel中的学号查询数据库中是否存在相同的数据
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.select(User::getUserAccount)
+                .in(User::getUserAccount,userAccountList);
+        List<User> users = userMapper.selectList(queryWrapper);
+        //如果数据库中存在相同的数据，则排除
+        if (users.size() != 0){
+            collect = collect.parallelStream().filter(userExcelDTO -> {
+                for (User user : users) {
+                    if (user.getUserAccount().equals(userExcelDTO.getUserAccount())) {
+                        return false;
+                    }
+                }
+                return true;
+            }).collect(Collectors.toList());
+        }
+        return collect;
     }
 
 

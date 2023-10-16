@@ -5,7 +5,9 @@ import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.util.ListUtils;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
+import org.wxl.cqiemutualselection.common.ErrorCode;
 import org.wxl.cqiemutualselection.domain.dto.UserExcelDTO;
+import org.wxl.cqiemutualselection.exception.BusinessException;
 import org.wxl.cqiemutualselection.service.IUserService;
 
 import java.util.List;
@@ -74,6 +76,11 @@ public class DemoDataListener implements ReadListener<UserExcelDTO> {
      * 加上存储数据库
      */
     private void saveData() {
+        //排除已存在的数据
+        cachedDataList = userService.excludeUser(cachedDataList);
+        if (cachedDataList.size() == 0){
+            throw new BusinessException(ErrorCode.NULL_ERROR,"请检查Excel表中的数据");
+        }
         log.info("{}条数据，开始存储数据库！", cachedDataList.size());
         userService.saveByExcel(cachedDataList);
         log.info("存储数据库成功！");

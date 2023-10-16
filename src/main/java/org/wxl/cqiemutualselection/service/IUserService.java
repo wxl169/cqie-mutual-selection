@@ -30,4 +30,11 @@ public interface IUserService extends IService<User> {
      * @param cachedDataList excel导入的数据
      */
     void saveByExcel(List<UserExcelDTO> cachedDataList);
+
+    /**
+     * 排除已存在的数据
+     * @param cachedDataList 要存入的数据
+     * @return 需要存的数据
+     */
+    List<UserExcelDTO> excludeUser(List<UserExcelDTO> cachedDataList);
 }
