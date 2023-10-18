@@ -56,4 +56,9 @@ public interface UserConstant {
     String ROLE_ADMIN = "管理员";
     int ROLE_ADMIN_SQL = 2;
 
+    /**
+     * 用户状态：未删除
+     */
+    int NOT_IS_DELETE = 0;
+
 }

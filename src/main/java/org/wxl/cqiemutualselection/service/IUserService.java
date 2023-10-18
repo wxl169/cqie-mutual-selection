@@ -5,6 +5,7 @@ import org.wxl.cqiemutualselection.domain.dto.LoginDTO;
 import org.wxl.cqiemutualselection.domain.dto.UserExcelDTO;
 import org.wxl.cqiemutualselection.domain.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.wxl.cqiemutualselection.domain.vo.CurrentUserVO;
 
 import java.util.List;
 
@@ -22,9 +23,9 @@ public interface IUserService extends IService<User> {
      * 用户或企业登录
      *
      * @param loginDTO 账号密码
-     * @return 是否登录成功
+     * @return 登录用户信息
      */
-    boolean userLogin(LoginDTO loginDTO);
+    CurrentUserVO userLogin(LoginDTO loginDTO);
 
     /**
      * 保存从excel导入的数据
@@ -47,4 +48,10 @@ public interface IUserService extends IService<User> {
      * @return 是否注册成功
      */
     boolean companiesRegister(CompaniesInfoDTO companiesInfoDTO);
+    /**
+     * 获取当前登录的用户信息
+     *
+     * @return 当前登录的用户信息
+     */
+    CurrentUserVO getCurrentUserInfo(Long userId);
 }

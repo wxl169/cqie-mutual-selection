@@ -11,6 +11,7 @@ import org.wxl.cqiemutualselection.common.ErrorCode;
 import org.wxl.cqiemutualselection.common.ResultUtils;
 import org.wxl.cqiemutualselection.domain.dto.CompaniesInfoDTO;
 import org.wxl.cqiemutualselection.domain.dto.LoginDTO;
+import org.wxl.cqiemutualselection.domain.vo.CurrentUserVO;
 import org.wxl.cqiemutualselection.exception.BusinessException;
 import org.wxl.cqiemutualselection.service.IUserService;
 
@@ -29,20 +30,16 @@ public class UserController {
     /**
      * 用户登录
      * @param loginDTO 账号密码
-     * @return 是否登录成功
+     * @return 登录用户信息
      */
     @PostMapping("/login")
     @SaIgnore
     @ApiOperation("用户或企业登录")
-    public BaseResponse doLogin(@RequestBody LoginDTO loginDTO){
+    public BaseResponse<CurrentUserVO> doLogin(@RequestBody LoginDTO loginDTO){
         if (loginDTO == null){
             throw new BusinessException(ErrorCode.NULL_ERROR,"请输入账号和密码");
         }
-        boolean loginJudge = userService.userLogin(loginDTO);
-        if (!loginJudge){
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"登录失败");
-        }
-        return ResultUtils.success(true);
+        return ResultUtils.success(userService.userLogin(loginDTO));
     }
 
 
@@ -65,11 +62,26 @@ public class UserController {
         return ResultUtils.success(true);
     }
 
+    /**
+     * 获取当前登录的用户信息
+     *
+     * @return 当前登录的用户信息
+     */
+    @SaIgnore
+    @GetMapping("/currentUser")
+    @ApiOperation("获取当前登录的用户信息")
+    public BaseResponse<CurrentUserVO> getCurrentUser(){
+        Long loginId = StpUtil.getLoginIdAsLong();
+        return ResultUtils.success(userService.getCurrentUserInfo(loginId));
+    }
 
     @SaIgnore
-    @GetMapping("/isLogin")
-    @ApiOperation("测试登录用户信息")
-    public String test(){
-        return "当前会话是否登录：" + StpUtil.isLogin() + "当前登录用户id," + StpUtil.getLoginId();
+    @PostMapping("/logout")
+    @ApiOperation("退出登录")
+    public BaseResponse<String> userLogout(){
+        Long loginId = StpUtil.getLoginIdAsLong();
+        StpUtil.logout(loginId);
+        return ResultUtils.success("退出成功");
     }
+
 }

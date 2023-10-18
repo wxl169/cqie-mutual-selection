@@ -15,6 +15,7 @@ import org.wxl.cqiemutualselection.domain.dto.UserExcelDTO;
 import org.wxl.cqiemutualselection.domain.entity.Companies;
 import org.wxl.cqiemutualselection.domain.entity.TbClass;
 import org.wxl.cqiemutualselection.domain.entity.User;
+import org.wxl.cqiemutualselection.domain.vo.CurrentUserVO;
 import org.wxl.cqiemutualselection.exception.BusinessException;
 import org.wxl.cqiemutualselection.mapper.TbClassMapper;
 import org.wxl.cqiemutualselection.mapper.UserMapper;
@@ -53,7 +54,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
 
     @Override
-    public boolean userLogin(LoginDTO loginDTO) {
+    public CurrentUserVO userLogin(LoginDTO loginDTO) {
         if (loginDTO.getType() == null){
             throw new BusinessException(ErrorCode.NULL_ERROR,"请选择登录账户类型");
         }
@@ -68,15 +69,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             queryWrapper.select(User::getId,User::getUserAccount,User::getPassword)
                     .eq(User::getUserAccount,loginDTO.getUserAccount())
                     .eq(User::getPassword,password);
-            User user = this.getOne(queryWrapper);
-            // 1.4 判断是否登录成功
-            // 1.4.1 如果user为空，则登录失败
-            if (user == null){
-                throw new BusinessException(ErrorCode.SYSTEM_ERROR,"请注册用户账号");
-            }
-            // 1.4.2 如果user不为空，则登录成功保存在Session中
-            StpUtil.login(user.getId());
-            return true;
         }
 
         // 2.选择的登录类型 ———— 企业
@@ -90,17 +82,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                     .eq(User::getType,UserConstant.ROLE_COMPANIES_SQL)
                     .eq(User::getUserAccount,loginDTO.getCompaniesAccount())
                     .eq(User::getPassword,password);
-            User user = this.getOne(queryWrapper);
-            // 2.4 判断是否登录成功
-            // 2.4.1 如果user为空，则登录失败
-            if (user == null){
-                throw new BusinessException(ErrorCode.SYSTEM_ERROR,"请注册企业账号");
-            }
-            // 2.4.2 如果user不为空，则登录成功保存在Session中
-            StpUtil.login(user.getId());
-            return true;
         }
-        return false;
+        User user = this.getOne(queryWrapper);
+        // 2.4 判断是否登录成功
+        // 2.4.1 如果user为空，则登录失败
+        if (user == null){
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"请先注册账号");
+        }
+        // 2.4.2 如果user不为空，则登录成功保存在Session中
+        StpUtil.login(user.getId());
+        return  BeanCopyUtils.copyBean(user, CurrentUserVO.class);
     }
 
     @Override
@@ -228,6 +219,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             throw new BusinessException(ErrorCode.SYSTEM_ERROR,"添加企业用户信息失败");
         }
         return true;
+    }
+
+    @Override
+    public CurrentUserVO getCurrentUserInfo(Long userId) {
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.select(User::getId,User::getType,User::getUserAccount,User::getUserName,User::getAvatar)
+                .eq(userId != null && userId > 0 ,User::getId,userId)
+                .eq(User::getIsDelete,UserConstant.NOT_IS_DELETE);
+        User user = this.getOne(queryWrapper);
+        if (user == null){
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"请先登录账号");
+        }
+        return BeanCopyUtils.copyBean(user, CurrentUserVO.class);
     }
 
 
