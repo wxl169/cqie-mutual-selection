@@ -4,13 +4,16 @@ import cn.dev33.satoken.SaManager;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * @author 16956
  */
 @SpringBootApplication
 @MapperScan("org.wxl.cqiemutualselection.mapper")
-public class CqieMutualSelectionApplication {
+public class CqieMutualSelectionApplication  {
+
 
     public static void main(String[] args) {
         SpringApplication.run(CqieMutualSelectionApplication.class, args);

@@ -1,11 +1,11 @@
 package org.wxl.cqiemutualselection.service;
 
-import org.wxl.cqiemutualselection.domain.dto.CompaniesInfoDTO;
-import org.wxl.cqiemutualselection.domain.dto.LoginDTO;
-import org.wxl.cqiemutualselection.domain.dto.UserExcelDTO;
+import org.wxl.cqiemutualselection.domain.dto.companies.CompaniesInfoDTO;
+import org.wxl.cqiemutualselection.domain.dto.user.LoginDTO;
+import org.wxl.cqiemutualselection.domain.dto.user.UserExcelDTO;
 import org.wxl.cqiemutualselection.domain.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.wxl.cqiemutualselection.domain.vo.CurrentUserVO;
+import org.wxl.cqiemutualselection.domain.vo.user.CurrentUserVO;
 
 import java.util.List;
 

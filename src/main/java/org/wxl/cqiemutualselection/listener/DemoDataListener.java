@@ -6,7 +6,7 @@ import com.alibaba.excel.util.ListUtils;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.wxl.cqiemutualselection.common.ErrorCode;
-import org.wxl.cqiemutualselection.domain.dto.UserExcelDTO;
+import org.wxl.cqiemutualselection.domain.dto.user.UserExcelDTO;
 import org.wxl.cqiemutualselection.exception.BusinessException;
 import org.wxl.cqiemutualselection.service.IUserService;
 

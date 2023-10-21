@@ -1,4 +1,4 @@
-package org.wxl.cqiemutualselection.domain.dto;
+package org.wxl.cqiemutualselection.domain.dto.user;
 
 import cn.hutool.core.date.DatePattern;
 import com.alibaba.excel.annotation.ExcelProperty;

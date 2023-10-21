@@ -1,6 +1,5 @@
 package org.wxl.cqiemutualselection.controller;
 
-import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.stp.StpUtil;
 import io.swagger.annotations.Api;
@@ -9,9 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import org.wxl.cqiemutualselection.common.BaseResponse;
 import org.wxl.cqiemutualselection.common.ErrorCode;
 import org.wxl.cqiemutualselection.common.ResultUtils;
-import org.wxl.cqiemutualselection.domain.dto.CompaniesInfoDTO;
-import org.wxl.cqiemutualselection.domain.dto.LoginDTO;
-import org.wxl.cqiemutualselection.domain.vo.CurrentUserVO;
+import org.wxl.cqiemutualselection.domain.dto.companies.CompaniesInfoDTO;
+import org.wxl.cqiemutualselection.domain.dto.user.LoginDTO;
+import org.wxl.cqiemutualselection.domain.vo.user.CurrentUserVO;
 import org.wxl.cqiemutualselection.exception.BusinessException;
 import org.wxl.cqiemutualselection.service.IUserService;
 

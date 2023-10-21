@@ -33,7 +33,7 @@ public class SystemController {
     @SaIgnore
     @RequestMapping("/toRegister")
     public String toRegister(){
-        return "user/Register";
+        return "companies/Register";
     }
 
     /**

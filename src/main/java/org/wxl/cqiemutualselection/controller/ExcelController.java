@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.wxl.cqiemutualselection.common.BaseResponse;
 import org.wxl.cqiemutualselection.common.ResultUtils;
-import org.wxl.cqiemutualselection.domain.dto.UserExcelDTO;
+import org.wxl.cqiemutualselection.domain.dto.user.UserExcelDTO;
 import org.wxl.cqiemutualselection.listener.DemoDataListener;
 import org.wxl.cqiemutualselection.service.IUserService;
 

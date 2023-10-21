@@ -3,22 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link rel="stylesheet" type="text/css" href="/css/index.css"/>
-    <link rel="stylesheet" type="text/css" href="/css/mycss.css"/>
+    <link rel="stylesheet" type="text/css" href="/api/css/index.css"/>
+
+    <link rel="stylesheet" type="text/css" href="/api/css/mycss.css"/>
 </head>
 <body>
     <!--Vue.js-->
-    <script src="/js/vue.js"></script>
+    <script src="/api/js/vue.js"></script>
     <!--Element-ui-->
-    <script src="/js/index.js"></script>
+    <script src="/api/js/index.js"></script>
     <!--axios-->
-    <script src="/js/axios.min.js"></script>
+    <script src="/api/js/axios.min.js"></script>
 
     <div id="container">
         <el-container>
             <el-header height="100%">
 <!--                <img class="logo" src="https://assets.huibo.com/img/vue/enterprise/logo/login-logo.png"/>-->
-                <img class="logo" src="/img/server_html/logo.png"/>
+                <img class="logo" src="/api/img/server_html/logo.png"/>
             </el-header>
 
             <el-row style="position: relative; top: 50px">
@@ -102,7 +103,7 @@
     </div>
 
     <script>
-        var baseUrl = "http://localhost:8080/";
+        var baseUrl = "http://localhost:8080/api/";
         //登录验证
         var vm = new Vue({
             el: '#container',

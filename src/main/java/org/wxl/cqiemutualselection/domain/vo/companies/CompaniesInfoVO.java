@@ -1,6 +1,7 @@
-package org.wxl.cqiemutualselection.domain.dto;
+package org.wxl.cqiemutualselection.domain.vo.companies;
 
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -10,9 +11,9 @@ import java.time.LocalDateTime;
  * @author 16956
  */
 @Data
-public class CompaniesInfoDTO {
-    @ApiModelProperty(value = "企业名称")
-    private String companiesName;
+public class CompaniesInfoVO {
+    @ApiModelProperty(value = "企业主键")
+    private Long id;
 
     @ApiModelProperty(value = "企业全称")
     private String companiesFullName;
@@ -26,20 +27,12 @@ public class CompaniesInfoDTO {
     @ApiModelProperty(value = "成立日期")
     private LocalDateTime foundingTime;
 
-    @ApiModelProperty(value = "注册资产")
-    private Double registerAssets;
-
     @ApiModelProperty(value = "企业类型")
     private String companiesType;
 
-    @ApiModelProperty(value = "企业介绍")
-    private String companiesIntroduce;
-
     @ApiModelProperty(value = "企业人数")
     private Integer peopleNumber;
-    @ApiModelProperty(value = "企业邮箱")
-    private String companiesEmail;
 
-    @ApiModelProperty(value = "密码")
-    private String password;
+    @ApiModelProperty(value = "审核通过")
+    private Integer process;
 }
